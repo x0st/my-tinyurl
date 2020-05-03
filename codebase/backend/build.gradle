@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+}
+
+group 'my.tinyurl'
+version '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    compile 'com.google.inject:guice:4.2.3'
+    compile 'org.redisson:redisson:3.12.5'
+    compile 'org.slf4j:slf4j-simple:1.8.0-beta4'
+    compile 'io.javalin:javalin:3.8.0'
+    compile 'com.basho.riak:riak-client:2.0.7'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'Application',
+                'Class-Path': configurations.getByName('compile').getFiles().collect { it.getAbsolutePath() }.join(" ")
+        )
+    }
+}

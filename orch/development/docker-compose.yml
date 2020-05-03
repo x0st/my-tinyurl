@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+
+  # Backend
+  backend-java:
+    image: tinyurl-backend-java:latest
+    environment:
+      - REDIS_HOST=redis:6379
+      - RIAK_HOSTS=riak-coordinator,riak-member
+      - RANGE=0-1000000000
+    volumes:
+      - gradle:/root/.gradle:delegated
+      - ../../codebase/backend/src:/app/src:delegated
+      - ../../codebase/backend/build.gradle:/app/build.gradle:delegated
+      - ../../codebase/backend/settings.gradle:/app/settings.gradle:delegated
+
+  # Gateway
+  gateway-nginx:
+    image: tinyurl-gateway-nginx:latest
+    ports:
+      - 80:80
+
+  # Riak
+  riak-coordinator:
+    image: basho/riak-kv
+    ports:
+      - 8087:8087
+      - 8098:8098
+    environment:
+      - CLUSTER_NAME=riakkv
+    labels:
+      - 'com.basho.riak.cluster.name=riakkv'
+
+  riak-member:
+    image: basho/riak-kv
+    ports:
+      - 8087
+      - 8098
+    labels:
+      - 'com.basho.riak.cluster.name=riakkv'
+    links:
+      - riak-coordinator
+    depends_on:
+      - riak-coordinator
+    environment:
+      - CLUSTER_NAME=riakkv
+      - COORDINATOR_NODE=riak-coordinator
+
+  # Redis
+  redis:
+    image: redis:5-alpine
+
+volumes:
+  gradle:
