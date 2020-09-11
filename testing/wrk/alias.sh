@@ -6,4 +6,4 @@ path='api/alias'
 
 url=${host}/${path}
 
-/usr/local/bin/wrk -t10 -c100 -d30s --latency -s alias.lua ${url}
+/usr/local/bin/wrk -t10 -c40 -d30s --latency -s alias.lua ${url}

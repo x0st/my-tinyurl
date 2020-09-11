@@ -1,4 +1,4 @@
-package business;
+package business.shorturl;
 
 final public class ShortUrl {
     public String uid;

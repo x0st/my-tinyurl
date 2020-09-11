@@ -1,6 +1,6 @@
-package uid;
+package uid.exception;
 
-public class UidException extends RuntimeException {
+final public class UidException extends RuntimeException {
     public UidException(Throwable cause) {
         super(cause);
     }

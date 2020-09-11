@@ -3,7 +3,9 @@ package bootstrap;
 import org.redisson.api.RAtomicLong;
 import org.redisson.api.RedissonClient;
 
-public class BootstrapRedis implements Bootstrap {
+import core.Bootstrap;
+
+final public class BootstrapRedis implements Bootstrap {
     private final RedissonClient redis;
 
     public BootstrapRedis(RedissonClient redis) {

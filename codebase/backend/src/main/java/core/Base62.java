@@ -1,4 +1,4 @@
-package uid;
+package core;
 
 final public class Base62 {
     final private String characters;

@@ -6,7 +6,7 @@ import com.google.inject.Injector;
 import java.util.ArrayList;
 import java.util.List;
 
-import bootstrap.Bootstrap;
+import core.Bootstrap;
 import bootstrap.BootstrapRedis;
 import core.http.validator.exception.ValidationException;
 import di.AppModule;
