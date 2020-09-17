@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 
-host='http://127.0.0.1'
+host='http://localhost'
 # host='http://45.55.50.54'
-path='api/alias'
+path='api/v1/shortenUrl'
 
 url=${host}/${path}
 

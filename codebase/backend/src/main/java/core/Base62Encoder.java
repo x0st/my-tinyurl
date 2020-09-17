@@ -1,11 +1,7 @@
 package core;
 
-final public class Base62 {
-    final private String characters;
-
-    public Base62() {
-        this.characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    }
+final public class Base62Encoder {
+    final private String characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
     public String encodeBase10(long b10) {
         if (b10 < 1) throw new IllegalArgumentException("b10 must be positive");
