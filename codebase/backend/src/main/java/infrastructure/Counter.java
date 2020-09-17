@@ -27,7 +27,6 @@ final class Counter {
     }
 
     public long increment() throws CounterException {
-        final long logPosition = this.log.nextPosition();
         final long counter = this.counter.incrementAndGet();
 
         if (counter >= this.range[1]) {
@@ -35,7 +34,7 @@ final class Counter {
         }
 
         try {
-            this.log.write(logPosition, counter);
+            this.log.write(counter);
         } catch (PersistenceException exception) {
             throw new CounterException(exception);
         }

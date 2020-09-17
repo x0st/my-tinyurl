@@ -1,5 +1,7 @@
 package infrastructure;
 
+import com.basho.riak.client.api.RiakClient;
+import com.basho.riak.client.core.RiakCluster;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -10,6 +12,7 @@ import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 
 import api.http.UrlController;
 import core.Base62Encoder;
@@ -19,6 +22,15 @@ import domain.Resolver;
 import domain.Shortener;
 
 final class DIModule extends AbstractModule {
+//    @Provides
+//    @Singleton
+//    static RiakClient provideRiakClient(Config config) throws UnknownHostException {
+//        String[] servers = config.getString("riak.servers").split(",");
+//        RiakClient riakClient = RiakClient.newClient(servers);
+//
+//        return riakClient;
+//    }
+
     @Provides
     @Singleton
     static Config provideConfig() {
@@ -47,14 +59,15 @@ final class DIModule extends AbstractModule {
     @Provides
     @Singleton
     static Repository provideRepository() {
-        return new RepositoryImpl();
+        return new RepositoryImpl(null);
     }
 
     @Provides
     @Singleton
     static CounterLog provideCounterLog(Config config) throws IOException {
         return new CounterLog(
-                config.getString("counter.log.dir")
+                config.getString("counter.log.dir"),
+                3
         );
     }
 

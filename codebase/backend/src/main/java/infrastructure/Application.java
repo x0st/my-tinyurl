@@ -18,17 +18,7 @@ public class Application {
         this.javalin = Javalin.create();
         this.injector = Guice.createInjector(new DIModule());
 
-        this.bootstrap();
-        this.mapExceptions();
         this.defineRoutes();
-    }
-
-    private void bootstrap() {
-
-    }
-
-    private void mapExceptions() {
-
     }
 
     private void defineRoutes() {
