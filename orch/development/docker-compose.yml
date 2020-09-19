@@ -5,10 +5,6 @@ services:
   # Backend
   backend-java:
     image: tinyurl-backend-java:latest
-    environment:
-      - REDIS_HOST=redis:6379
-      - RIAK_HOSTS=riak-coordinator,riak-member
-      - RANGE=0-1000000000
     volumes:
       - gradle:/root/.gradle:delegated
       - ../../codebase/backend/src:/app/src:delegated
