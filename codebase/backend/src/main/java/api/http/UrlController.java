@@ -1,6 +1,7 @@
 package api.http;
 
 import com.alibaba.fastjson.JSONObject;
+import com.typesafe.config.Config;
 
 import domain.LongUrl;
 import domain.NoUrlFound;
@@ -12,10 +13,12 @@ import io.javalin.http.Context;
 final public class UrlController {
     private final Shortener shortener;
     private final Resolver resolver;
+    private final Config config;
 
-    public UrlController(Shortener shortener, Resolver resolver) {
+    public UrlController(Shortener shortener, Resolver resolver, Config config) {
         this.shortener = shortener;
         this.resolver = resolver;
+        this.config = config;
     }
 
     public void shorten(Context context) {
@@ -28,14 +31,18 @@ final public class UrlController {
 
         context.result(jsonResponse.toJSONString());
         context.header("Content-Type", "application/json");
-        context.status(200);
+        context.status(201);
     }
 
-    public void resolve(Context context) throws NoUrlFound {
+    public void resolve(Context context) {
         ShortUrl shortUrl = new ShortUrl(context.pathParam("hash"));
-        LongUrl longUrl = this.resolver.resolve(shortUrl);
 
-        context.header("Location", longUrl.getUrl());
-        context.status(301);
+        try {
+            LongUrl longUrl = this.resolver.resolve(shortUrl);
+
+            context.redirect(longUrl.getUrl());
+        } catch (NoUrlFound ex) {
+            context.redirect(this.config.getString("app.url"));
+        }
     }
 }

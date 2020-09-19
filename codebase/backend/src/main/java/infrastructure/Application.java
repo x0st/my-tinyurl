@@ -10,7 +10,7 @@ public class Application {
     final private Injector injector;
     final private Javalin javalin;
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         new Application().run();
     }
 
@@ -27,6 +27,6 @@ public class Application {
     }
 
     public void run() {
-        this.javalin.start(80);
+        this.javalin.start(9002);
     }
 }

@@ -111,7 +111,7 @@ final class DIModule extends AbstractModule {
 
     @Provides
     @Singleton
-    static UrlController provideUrlController(Shortener shortener, Resolver resolver) {
-        return new UrlController(shortener, resolver);
+    static UrlController provideUrlController(Shortener shortener, Resolver resolver, Config config) {
+        return new UrlController(shortener, resolver, config);
     }
 }

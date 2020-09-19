@@ -5,11 +5,14 @@ services:
   # Backend
   backend-java:
     image: tinyurl-backend-java:latest
-    volumes:
-      - gradle:/root/.gradle:delegated
-      - ../../codebase/backend/src:/app/src:delegated
-      - ../../codebase/backend/build.gradle:/app/build.gradle:delegated
-      - ../../codebase/backend/settings.gradle:/app/settings.gradle:delegated
+    ports:
+      - 9002
+
+  # Frontend
+  frontend-nginx:
+    image: tinyurl-frontend-nginx:latest
+    ports:
+      - 9001
 
   # Gateway
   gateway-nginx:
