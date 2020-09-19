@@ -2,6 +2,7 @@ package infrastructure;
 
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.core.RiakCluster;
+import com.basho.riak.client.core.RiakNode;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -12,7 +13,8 @@ import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import api.http.UrlController;
 import core.Base62Encoder;
@@ -22,14 +24,20 @@ import domain.Resolver;
 import domain.Shortener;
 
 final class DIModule extends AbstractModule {
-//    @Provides
-//    @Singleton
-//    static RiakClient provideRiakClient(Config config) throws UnknownHostException {
-//        String[] servers = config.getString("riak.servers").split(",");
-//        RiakClient riakClient = RiakClient.newClient(servers);
-//
-//        return riakClient;
-//    }
+    @Provides
+    @Singleton
+    static RiakClient provideRiakClient(Config config) {
+        List<RiakNode> riakNodes = new ArrayList<>(3);
+
+        for (String server : config.getString("riak.servers").split(",")) {
+            riakNodes.add(new RiakNode.Builder().withRemoteAddress(server).build());
+        }
+
+        RiakCluster riakCluster = new RiakCluster.Builder(riakNodes).build();
+        RiakClient riakClient = new RiakClient(riakCluster);
+
+        return riakClient;
+    }
 
     @Provides
     @Singleton
@@ -58,8 +66,8 @@ final class DIModule extends AbstractModule {
 
     @Provides
     @Singleton
-    static Repository provideRepository() {
-        return new RepositoryImpl(null);
+    static Repository provideRepository(Cache cache) {
+        return new RepositoryImpl(null, cache);
     }
 
     @Provides
@@ -84,12 +92,11 @@ final class DIModule extends AbstractModule {
 
     @Provides
     @Singleton
-    static Shortener provideShortener(Counter counter, Cache cache, Repository repository, Config config) {
+    static Shortener provideShortener(Counter counter, Repository repository, Config config) {
         return new ShortenerImpl(
                 counter,
                 new Base62Encoder(),
                 config.getString("app.url"),
-                cache,
                 repository
         );
     }
