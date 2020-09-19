@@ -23,7 +23,7 @@ dependencies {
 jar {
     manifest {
         attributes(
-                'Main-Class': 'Application',
+                'Main-Class': 'infrastructure.Application',
                 'Class-Path': configurations.getByName('compile').getFiles().collect { it.getAbsolutePath() }.join(" ")
         )
     }

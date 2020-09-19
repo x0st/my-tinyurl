@@ -34,6 +34,8 @@ final class DIModule extends AbstractModule {
         }
 
         RiakCluster riakCluster = new RiakCluster.Builder(riakNodes).build();
+        riakCluster.start();
+
         RiakClient riakClient = new RiakClient(riakCluster);
 
         return riakClient;
@@ -66,8 +68,8 @@ final class DIModule extends AbstractModule {
 
     @Provides
     @Singleton
-    static Repository provideRepository(Cache cache) {
-        return new RepositoryImpl(null, cache);
+    static Repository provideRepository(RiakClient riakClient, Cache cache) {
+        return new RepositoryImpl(riakClient, cache);
     }
 
     @Provides

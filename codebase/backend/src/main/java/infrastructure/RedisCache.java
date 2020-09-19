@@ -15,7 +15,10 @@ final class RedisCache implements Cache {
 
     @Override
     public String get(String key) {
-        return String.valueOf(this.redissonClient.getBucket(key).get());
+        Object response = this.redissonClient.getBucket(key).get();
+
+        if (null == response) return null;
+        return String.valueOf(response);
     }
 
     @Override
