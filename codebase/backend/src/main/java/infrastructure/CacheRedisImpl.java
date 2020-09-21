@@ -6,10 +6,10 @@ import java.util.concurrent.TimeUnit;
 
 import core.Cache;
 
-final class RedisCache implements Cache {
+final class CacheRedisImpl implements Cache {
     private final RedissonClient redissonClient;
 
-    RedisCache(RedissonClient redissonClient) {
+    CacheRedisImpl(RedissonClient redissonClient) {
         this.redissonClient = redissonClient;
     }
 

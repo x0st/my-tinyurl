@@ -1,6 +1,6 @@
 PROJECT_ROOT=$(shell pwd)/../..
 
-.PHONY: up down logs enter-java build
+.PHONY: up down logs enter-java build enter-riak-coordinator enter-redis ri
 
 build:
 	# Clean up
@@ -20,6 +20,9 @@ build:
 	# Clean up
 	rm -rf backend/java/codebase
 	rm -rf frontend/nginx/codebase
+
+enter-riak-coordinator:
+	docker-compose exec riak-coordinator sh
 
 enter-java:
 	docker-compose exec backend-java sh
@@ -45,3 +48,12 @@ hotswap:
 	docker exec $(shell docker-compose ps -q backend-java) /opt/gradle/gradle-6.3/bin/gradle --build-file /app/build.gradle jar
 	docker exec $(shell docker-compose ps -q backend-java) supervisorctl restart app
 	/usr/bin/osascript -e "display notification \"Compiled\" with title \"tinyurl\""
+
+riak-create-bucket-types:
+	docker-compose exec \
+		riak-coordinator \
+		/usr/sbin/riak-admin \
+		bucket-type create urls \
+		'{"props": {"n_val": 2, "last_write_wins": true, "allow_mult": false, "w": 1, "r": 1, "dw": 1, "dvv_enabled": false}}'
+
+	docker-compose exec riak-coordinator /usr/sbin/riak-admin bucket-type activate urls

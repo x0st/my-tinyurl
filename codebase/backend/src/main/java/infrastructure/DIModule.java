@@ -63,13 +63,16 @@ final class DIModule extends AbstractModule {
     @Provides
     @Singleton
     static Cache provideCache(RedissonClient redissonClient) {
-        return new RedisCache(redissonClient);
+        return new CacheRedisImpl(redissonClient);
     }
 
     @Provides
     @Singleton
     static Repository provideRepository(RiakClient riakClient, Cache cache) {
-        return new RepositoryImpl(riakClient, cache);
+        return new RepositoryCacheDecorator(
+                new RepositoryRiakImpl(riakClient),
+                cache
+        );
     }
 
     @Provides
