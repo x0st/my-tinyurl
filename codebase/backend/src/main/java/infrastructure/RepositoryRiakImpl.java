@@ -21,8 +21,8 @@ final class RepositoryRiakImpl implements Repository {
 
     @Override
     public void persist(ShortUrl shortUrl) {
-        String hash = shortUrl.getHash();
-        String longUrl = shortUrl.getLongUrl().getUrl();
+        String hash = shortUrl.path();
+        String longUrl = shortUrl.longURL().toString();
 
         try {
             this.riakStore(String.format("urls/short_urls/%s", hash), longUrl);
@@ -33,12 +33,12 @@ final class RepositoryRiakImpl implements Repository {
     }
 
     @Override
-    public LongUrl findLongUrl(ShortUrl shortUrl) {
+    public LongUrl find(ShortUrl shortUrl) {
         String longUrl;
         LongUrl longUrlObj;
 
         try {
-            longUrl = this.riakFetch(String.format("urls/short_urls/%s", shortUrl.getHash()));
+            longUrl = this.riakFetch(String.format("urls/short_urls/%s", shortUrl.path()));
             if (null == longUrl) return null;
             longUrlObj = new LongUrl(longUrl);
 
@@ -49,12 +49,12 @@ final class RepositoryRiakImpl implements Repository {
     }
 
     @Override
-    public ShortUrl findShortUrl(LongUrl longUrlObj) {
+    public ShortUrl find(LongUrl longUrlObj) {
         String hash;
         ShortUrl shortUrlObj;
 
         try {
-            hash = this.riakFetch(String.format("urls/long_urls/%s", longUrlObj.getUrl()));
+            hash = this.riakFetch(String.format("urls/long_urls/%s", longUrlObj.toString()));
             if (null == hash) return null;
             shortUrlObj = new ShortUrl(hash);
 

@@ -7,7 +7,8 @@ final public class LongUrl {
         this.url = url;
     }
 
-    public String getUrl() {
+    @Override
+    public String toString() {
         return url;
     }
 }

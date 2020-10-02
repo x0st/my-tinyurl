@@ -9,6 +9,8 @@ import com.google.inject.Singleton;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
+import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.server.DumbWatcher;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 
@@ -97,13 +99,20 @@ final class DIModule extends AbstractModule {
 
     @Provides
     @Singleton
-    static Shortener provideShortener(Counter counter, Repository repository, Config config) {
+    static Shortener provideShortener(Counter counter, Repository repository, Config config, ZooKeeper zooKeeper) {
         return new ShortenerImpl(
                 counter,
                 new Base62Encoder(),
                 config.getString("app.url"),
-                repository
+                repository,
+                zooKeeper
         );
+    }
+
+    @Provides
+    @Singleton
+    static ZooKeeper provideZooKeeper(Config config) throws IOException {
+        return new ZooKeeper(config.getString("zookeeper.servers"), 6000, new DumbWatcher());
     }
 
     @Provides

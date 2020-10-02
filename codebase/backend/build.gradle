@@ -11,6 +11,7 @@ repositories {
 
 
 dependencies {
+    compile 'org.apache.zookeeper:zookeeper:3.6.2'
     compile 'com.google.inject:guice:4.2.3'
     compile 'org.redisson:redisson:3.12.5'
     compile 'org.slf4j:slf4j-simple:1.8.0-beta4'

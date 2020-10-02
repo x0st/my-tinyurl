@@ -1,5 +1,7 @@
 package domain;
 
 public interface Shortener {
-    public ShortUrl shorten(LongUrl url);
+    ShortUrl shorten(LongUrl url);
+
+    ShortUrl shorten(LongUrl url, String path) throws PathAlreadyTaken;
 }

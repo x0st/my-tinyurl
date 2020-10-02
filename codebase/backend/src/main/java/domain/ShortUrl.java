@@ -2,30 +2,31 @@ package domain;
 
 final public class ShortUrl {
     private final String url;
-    private final String hash;
+    private final String path;
     private final LongUrl longUrl;
 
-    public ShortUrl(String hash, String url, LongUrl longUrl) {
+    public ShortUrl(String path, String host, LongUrl longUrl) {
         this.longUrl = longUrl;
-        this.hash = hash;
-        this.url = url;
+        this.path = path;
+        this.url = String.format("%s/%s", host, path);
     }
 
-    public ShortUrl(String hash) {
-        this.hash = hash;
+    public ShortUrl(String path) {
+        this.path = path;
         this.url = null;
         this.longUrl = null;
     }
 
-    public LongUrl getLongUrl() {
+    public LongUrl longURL() {
         return this.longUrl;
     }
 
-    public String getUrl() {
-        return url;
+    public String path() {
+        return path;
     }
 
-    public String getHash() {
-        return hash;
+    @Override
+    public String toString() {
+        return url;
     }
 }

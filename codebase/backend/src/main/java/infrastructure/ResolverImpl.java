@@ -15,9 +15,11 @@ final class ResolverImpl implements Resolver {
 
     @Override
     public LongUrl resolve(ShortUrl shortUrl) throws NoUrlFound {
-        LongUrl longUrl = this.repository.findLongUrl(shortUrl);
+        LongUrl longUrl = this.repository.find(shortUrl);
 
-        if (null == longUrl) throw new NoUrlFound();
+        if (null == longUrl) {
+            throw new NoUrlFound(String.format("Unable to find a url with path '%s'", shortUrl.path()));
+        }
 
         return longUrl;
     }

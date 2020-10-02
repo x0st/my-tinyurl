@@ -5,6 +5,7 @@ import com.typesafe.config.Config;
 
 import domain.LongUrl;
 import domain.NoUrlFound;
+import domain.PathAlreadyTaken;
 import domain.Resolver;
 import domain.ShortUrl;
 import domain.Shortener;
@@ -22,12 +23,31 @@ final public class UrlController {
     }
 
     public void shorten(Context context) {
+        String customPath = context.formParam("path");
         LongUrl longUrl = new LongUrl(context.formParam("url"));
-        ShortUrl shortUrl = this.shortener.shorten(longUrl);
+        ShortUrl shortUrl;
+
+        if (null != customPath) {
+            try {
+                shortUrl = this.shortener.shorten(longUrl, customPath);
+            } catch (PathAlreadyTaken pathAlreadyTaken) {
+                JSONObject jsonObject = new JSONObject()
+                        .fluentPut("error", new JSONObject()
+                                .fluentPut("message", pathAlreadyTaken.getMessage()));
+
+                context.result(jsonObject.toJSONString());
+                context.header("Content-Type", "application/json");
+                context.status(412);
+
+                return;
+            }
+        } else {
+            shortUrl = this.shortener.shorten(longUrl);
+        }
 
         JSONObject jsonResponse = new JSONObject()
                 .fluentPut("data", new JSONObject()
-                        .fluentPut("url", shortUrl.getUrl()));
+                        .fluentPut("url", shortUrl.toString()));
 
         context.result(jsonResponse.toJSONString());
         context.header("Content-Type", "application/json");
@@ -40,7 +60,7 @@ final public class UrlController {
         try {
             LongUrl longUrl = this.resolver.resolve(shortUrl);
 
-            context.redirect(longUrl.getUrl());
+            context.redirect(longUrl.toString());
         } catch (NoUrlFound ex) {
             context.redirect(this.config.getString("app.url"));
         }
