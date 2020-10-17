@@ -46,6 +46,13 @@ services:
       - CLUSTER_NAME=riakkv
       - COORDINATOR_NODE=riak-coordinator
 
+  # Zookeeper
+  zookeeper:
+    image: zookeeper:latest
+    restart: always
+    ports:
+      - 2181:2181
+
   # Redis
   redis:
     image: redis:5-alpine

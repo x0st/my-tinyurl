@@ -9,6 +9,7 @@ final class CounterLog {
     private final Semaphore semaphore;
     private Integer logIndex = 0;
     private final int logQuantity;
+    private final Object lock = new Object();
 
     CounterLog(String dir, int logQuantity) throws IOException {
         this.raf = new RandomAccessFile[logQuantity];
@@ -27,10 +28,8 @@ final class CounterLog {
         try {
             this.semaphore.acquire();
 
-            synchronized (this.logIndex) {
-                if (this.logQuantity-1 <= this.logIndex) { this.logIndex = 0; }
-                else { this.logIndex++; }
-
+            synchronized (this.lock) {
+                this.logIndex = this.logQuantity-1 <= this.logIndex ? 0 : ++this.logIndex;
                 logIndex = this.logIndex;
             }
 
@@ -41,10 +40,10 @@ final class CounterLog {
                     (byte) ((counter >> 8) & 0xFF),
                     (byte) ((counter >> 0) & 0xFF),
             });
-
-            this.semaphore.release();
         } catch (IOException | InterruptedException exception) {
             throw new PersistenceException();
+        } finally {
+            this.semaphore.release();
         }
     }
 

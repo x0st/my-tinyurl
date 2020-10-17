@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+}
+
+group 'my.tinyurl'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.typesafe:config:1.4.0'
+    compile 'com.google.inject:guice:4.2.3'
+    compile 'org.slf4j:slf4j-simple:1.8.0-beta4'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
