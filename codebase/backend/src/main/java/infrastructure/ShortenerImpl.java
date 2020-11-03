@@ -1,13 +1,12 @@
 package infrastructure;
 
-import java.util.concurrent.TimeUnit;
-
 import core.Base62Encoder;
-import core.Cache;
 import domain.LongUrl;
 import domain.Repository;
 import domain.ShortUrl;
 import domain.Shortener;
+import infrastructure.counter.Counter;
+import infrastructure.counter.CounterException;
 
 final class ShortenerImpl implements Shortener {
     private final String appUrl;

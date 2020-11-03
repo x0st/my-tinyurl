@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 
-# host='http://127.0.0.1'
-host='http://45.55.50.54'
-path='2bI'
+host='http://127.0.0.1'
+#host='http://45.55.50.54'
+path='1'
 
 url=${host}/${path}
 

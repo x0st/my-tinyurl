@@ -46,9 +46,9 @@ services:
       - CLUSTER_NAME=riakkv
       - COORDINATOR_NODE=riak-coordinator
 
-  # Redis
-  redis:
-    image: redis:5-alpine
-
+  # Memcached
+  memcached:
+    image: memcached:1.6-alpine
+ 
 volumes:
   gradle:

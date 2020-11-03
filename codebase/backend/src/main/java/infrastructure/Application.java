@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import api.http.UrlController;
+import infrastructure.counter.CounterSnapshotThread;
 import io.javalin.Javalin;
 
 public class Application {
@@ -17,6 +18,8 @@ public class Application {
     private Application() {
         this.javalin = Javalin.create();
         this.injector = Guice.createInjector(new DIModule());
+
+        this.injector.getInstance(CounterSnapshotThread.class).start();
 
         this.defineRoutes();
     }

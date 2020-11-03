@@ -1,6 +1,6 @@
 PROJECT_ROOT=$(shell pwd)/../..
 
-.PHONY: up down logs enter-java build enter-riak-coordinator enter-redis ri
+.PHONY: up down logs enter-java build enter-riak-coordinator
 
 build:
 	# Clean up
@@ -26,12 +26,8 @@ enter-riak-coordinator:
 
 enter-java:
 	docker-compose exec backend-java sh
-
-enter-redis:
-	docker-compose exec redis sh
-
 up:
-	docker-compose up -d riak-coordinator riak-member redis
+	docker-compose up -d riak-coordinator riak-member memcached
 	docker-compose up -d frontend-nginx backend-java
 	docker-compose up -d gateway-nginx
 

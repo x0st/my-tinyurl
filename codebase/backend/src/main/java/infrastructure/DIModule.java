@@ -9,10 +9,12 @@ import com.google.inject.Singleton;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
-import org.redisson.Redisson;
-import org.redisson.api.RedissonClient;
+import net.spy.memcached.KetamaConnectionFactory;
+import net.spy.memcached.MemcachedClient;
+import net.spy.memcached.MemcachedClientIF;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +24,10 @@ import core.Cache;
 import domain.Repository;
 import domain.Resolver;
 import domain.Shortener;
+import infrastructure.counter.Counter;
+import infrastructure.counter.CounterException;
+import infrastructure.counter.CounterLog;
+import infrastructure.counter.CounterSnapshotThread;
 
 final class DIModule extends AbstractModule {
     @Provides
@@ -49,21 +55,20 @@ final class DIModule extends AbstractModule {
 
     @Provides
     @Singleton
-    static RedissonClient provideRedissonClient(Config config) {
-        org.redisson.config.Config redissonConfig;
-        redissonConfig = new org.redisson.config.Config();
-        redissonConfig
-                .useSingleServer()
-                .setDatabase(0)
-                .setAddress(config.getString("redis.url"));
+    static MemcachedClientIF provideMemcachedClient(Config config) throws IOException {
+        List<InetSocketAddress> servers = new ArrayList<>();
 
-        return Redisson.create(redissonConfig);
+        for (String server : config.getString("memcached.servers").split(",")) {
+            servers.add(new InetSocketAddress(server, 11211));
+        }
+
+        return new MemcachedClient(new KetamaConnectionFactory(), servers);
     }
 
     @Provides
     @Singleton
-    static Cache provideCache(RedissonClient redissonClient) {
-        return new CacheRedisImpl(redissonClient);
+    static Cache provideCache(MemcachedClientIF memcachedClient) {
+        return new CacheMemcachedImpl(memcachedClient);
     }
 
     @Provides
@@ -78,21 +83,27 @@ final class DIModule extends AbstractModule {
     @Provides
     @Singleton
     static CounterLog provideCounterLog(Config config) throws IOException {
-        return new CounterLog(
-                config.getString("counter.log.dir"),
-                3
-        );
+        return new CounterLog(config.getString("counter.log.dir"));
     }
 
     @Provides
     @Singleton
     static Counter provideCounter(CounterLog counterLog, Config config) throws CounterException {
-        int[] range = new int[] {
-                config.getInt("range.beginning"),
-                config.getInt("range.end")
+        long[] range = new long[] {
+                config.getLong("range.beginning"),
+                config.getLong("range.end")
         };
 
-        return new Counter(range, counterLog);
+        return new Counter(range, counterLog.restore());
+    }
+
+    @Provides
+    @Singleton
+    static CounterSnapshotThread provideCounterSnapshotThread(Counter counter, CounterLog counterLog) {
+        return new CounterSnapshotThread(
+                counter,
+                counterLog
+        );
     }
 
     @Provides
